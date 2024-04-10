@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3001;
 let activeViewer = null;
 let waitlist = [];
 let accessTimeout = null;
-const ACCESS_DURATION = 60000; // 60 seconds or 1 minute
+const ACCESS_DURATION = 300000; // 60 seconds or 1 minute
 
 function grantAccessToNextViewer() {
     io.to(activeViewer).emit('timeout');
