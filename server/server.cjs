@@ -4,6 +4,9 @@ const socketIo = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
+const path = require('path');
+
+const PORT = process.env.PORT || 3001;
 
 let activeViewer = null;
 let waitlist = [];
@@ -70,7 +73,13 @@ io.on('connection', (socket) => {
     });
 });
 
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../build')));
 
-server.listen(3001, () => console.log('Server running on port 3001'));
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '../build', 'index.html'));
+    });
+}
 
-module.exports = server;
+
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -8,8 +8,11 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start-server": "node server/server.cjs",
-    "start": "concurrently \"npm run dev\" \"npm run start-server\""
+    "start": "node server/server.cjs",
+    "heroku-postbuild": "npm run build"
+  },
+  "engines": {
+    "node": "14.x"
   },
   "dependencies": {
     "express": "^4.19.2",
