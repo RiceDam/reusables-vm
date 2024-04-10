@@ -6,15 +6,6 @@ const socket = io("/", { path: "/socket.io/" });
 function ContentPage() {
   const [hasAccess, setHasAccess] = useState(false);
   const [waitlistPosition, setWaitlistPosition] = useState(null);
-  
-  useEffect(() => {
-    const onBeforeUnload = () => {
-      window.location.href = '/'
-    }
-
-    window.addEventListener('beforeunload', onBeforeUnload);
-    return () => window.removeEventListener('beforeunload', onBeforeUnload);
-  }, [])
 
   useEffect(() => {
     socket.connect();
