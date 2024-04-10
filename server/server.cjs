@@ -54,6 +54,7 @@ io.on('connection', (socket) => {
 
     // Handle disconnects, timeouts, etc.
     socket.on('disconnect', () => {
+        console.log('called disconnect')
         if (socket.id === activeViewer) {
             console.log(`Active viewer ${socket.id} disconnected.`);
             activeViewer = null;

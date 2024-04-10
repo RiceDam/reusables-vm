@@ -1,53 +1,22 @@
-import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import StartPage from "./pages/StartPage.jsx";
+import ContentPage from "./pages/ContentPage.jsx";
+import {useEffect} from "react";
 
-const socket = io("/", { path: "/socket.io/" });
+const router = createBrowserRouter([
+  {path: '/', element: <StartPage />},
+  {path: 'content', element: <ContentPage />}
+])
 
-function App() {
-  const [hasAccess, setHasAccess] = useState(false);
-  const [waitlistPosition, setWaitlistPosition] = useState(null);
-
+const App = () => {
   useEffect(() => {
-    socket.emit('requestAccess');
-
-    socket.on('accessGranted', () => {
-      setHasAccess(true);
-      setWaitlistPosition(null);
-    });
-
-    socket.on('addedToWaitlist', (data) => {
-      setWaitlistPosition(data.position);
-    });
-
-    socket.on('updatePosition', (data) => {
-      setWaitlistPosition(data.newPosition);
-    });
-
-    socket.on('timeout', () => {
-      setHasAccess(false);
-      setWaitlistPosition(null);
-    });
-
-    return () => {
-      socket.off();
+    if (window.location.pathname !== '/') {
+      window.location.href = '/'
     }
-  }, []);
-
+  }, [])
   return (
-    <div>
-      {hasAccess ? (
-        <div>Welcome, you have access!</div>
-      ) : (
-        <div>
-          {waitlistPosition !== null ? (
-            <div>You are number {waitlistPosition} in the queue.</div>
-          ) : (
-            <div>Waiting for access...</div>
-          )}
-        </div>
-      )}
-    </div>
+    <RouterProvider router={router} />
   );
-}
+};
 
 export default App;
