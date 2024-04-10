@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
+const socket = io("/", { path: "/socket.io/" });
+
 function ContentPage() {
   const [hasAccess, setHasAccess] = useState(false);
   const [waitlistPosition, setWaitlistPosition] = useState(null);
@@ -15,30 +17,42 @@ function ContentPage() {
   }, [])
 
   useEffect(() => {
-    const socket = io("/", { path: "/socket.io/" });
+    socket.connect();
+
     socket.emit('requestAccess');
 
-    socket.on('accessGranted', () => {
+    const setAccess = () => {
       setHasAccess(true);
       setWaitlistPosition(null);
-    });
+    }
 
-    socket.on('addedToWaitlist', (data) => {
+    const addToWaitlist = (data) => {
       setWaitlistPosition(data.position);
-    });
+    }
 
-    socket.on('updatePosition', (data) => {
+    const updatePosition = (data) => {
       setWaitlistPosition(data.newPosition);
-    });
+    }
 
-    socket.on('timeout', () => {
+    const timeout = () => {
       setHasAccess(false);
       setWaitlistPosition(null);
-    });
+    }
+
+    socket.on('accessGranted', setAccess);
+
+    socket.on('addedToWaitlist', addToWaitlist);
+
+    socket.on('updatePosition', updatePosition);
+
+    socket.on('timeout', timeout);
 
     return () => {
+      socket.off('accessGranted', setAccess);
+      socket.off('addedToWaitlist', addToWaitlist);
+      socket.off('updatePosition', updatePosition);
+      socket.off('timeout', timeout);
       socket.disconnect();
-      socket.off();
     }
   }, []);
 
